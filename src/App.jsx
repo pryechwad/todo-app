@@ -8,9 +8,8 @@ import TodoList from './components/TodoList';
 
 function App() {
   const [todos, setTodos] = useState(() => {
-    // Clear any existing data to start fresh
-    localStorage.removeItem('taskmaster-todos');
-    return [];
+    const saved = localStorage.getItem('taskmaster-todos');
+    return saved ? JSON.parse(saved) : [];
   });
 
   useEffect(() => {
