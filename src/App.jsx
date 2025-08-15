@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import Header from './components/Header';
+import Stats from './components/Stats';
+import Tips from './components/Tips';
+import QuickActions from './components/QuickActions';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
 
 function App() {
   const [todos, setTodos] = useState(() => {
-    const saved = localStorage.getItem('taskmaster-todos');
-    return saved ? JSON.parse(saved) : [
-      { id: 1, text: "Complete React project", completed: false },
-      { id: 2, text: "Review pull requests", completed: true },
-      { id: 3, text: "Plan weekend trip", completed: false }
-    ];
+    // Clear any existing data to start fresh
+    localStorage.removeItem('taskmaster-todos');
+    return [];
   });
 
   useEffect(() => {
@@ -41,6 +41,19 @@ function App() {
     ));
   };
 
+  const clearCompleted = () => {
+    setTodos(todos.filter(todo => !todo.completed));
+  };
+
+  const markAllComplete = () => {
+    setTodos(todos.map(todo => ({ ...todo, completed: true })));
+  };
+
+  const clearAllData = () => {
+    setTodos([]);
+    localStorage.removeItem('taskmaster-todos');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-100 via-pink-50 to-cyan-100 relative overflow-hidden">
       {/* Animated background elements */}
@@ -54,13 +67,38 @@ function App() {
         <div className="max-w-md mx-auto">
           <Header />
           <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/40 p-8">
+            <Stats todos={todos} />
+            <Tips />
             <TodoForm onAdd={addTodo} />
+            <QuickActions 
+              todos={todos}
+              onClearCompleted={clearCompleted}
+              onMarkAllComplete={markAllComplete}
+              onClearAll={clearAllData}
+            />
             <TodoList 
               todos={todos} 
               onToggle={toggleTodo} 
               onDelete={deleteTodo} 
               onEdit={editTodo}
             />
+          </div>
+          <div className="mt-6 bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/30">
+            <h3 className="text-lg font-semibold text-gray-700 mb-3 text-center">🚀 Features</h3>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="flex items-center gap-2 text-gray-600">
+                <span>💾</span> Auto-save to browser
+              </div>
+              <div className="flex items-center gap-2 text-gray-600">
+                <span>✏️</span> Click to edit tasks
+              </div>
+              <div className="flex items-center gap-2 text-gray-600">
+                <span>📱</span> Mobile responsive
+              </div>
+              <div className="flex items-center gap-2 text-gray-600">
+                <span>🌐</span> Works offline
+              </div>
+            </div>
           </div>
           <div className="text-center mt-6 text-gray-600 text-sm">
             💾 Auto-saves to your browser • 🌟 Always available offline
