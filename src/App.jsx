@@ -8,12 +8,21 @@ import TodoList from './components/TodoList';
 
 function App() {
   const [todos, setTodos] = useState(() => {
-    const saved = localStorage.getItem('taskmaster-todos');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('taskmaster-todos');
+      return saved ? JSON.parse(saved) : [];
+    } catch (error) {
+      console.error('Error loading todos:', error);
+      return [];
+    }
   });
 
   useEffect(() => {
-    localStorage.setItem('taskmaster-todos', JSON.stringify(todos));
+    try {
+      localStorage.setItem('taskmaster-todos', JSON.stringify(todos));
+    } catch (error) {
+      console.error('Error saving todos:', error);
+    }
   }, [todos]);
 
   const addTodo = (text) => {
@@ -50,7 +59,11 @@ function App() {
 
   const clearAllData = () => {
     setTodos([]);
-    localStorage.removeItem('taskmaster-todos');
+    try {
+      localStorage.removeItem('taskmaster-todos');
+    } catch (error) {
+      console.error('Error clearing todos:', error);
+    }
   };
 
   return (
